@@ -9,22 +9,12 @@ export class AriaDamageRoll {
 
         const messageTemplate = "systems/aria/templates/chat/weapon-card.hbs";
 
-        let rollData = {
-            user: game.user.id,
-            speaker: ChatMessage.getSpeaker({actor: actor}),
-        };
-
         let r = new Roll(this._formula);
         await r.evaluate();
-        //r.evaluate({async:false});
-        //r.evaluateSync({minimize:false, maximize:false, allowStrings:false, strict:true});
 
         const calc = r.result;
         const mod = (r.terms.length > 1);
 
-        let renderedRoll = await r.render();  
-        
-        
         const result = r.total;
 
         this._isFumble = (result == 0);
@@ -42,8 +32,7 @@ export class AriaDamageRoll {
         };
 
         let chatData = {
-                user: game.user.id,
-                type: CONST.CHAT_MESSAGE_STYLES.ROLL,
+                author: game.user.id,
                 speaker: ChatMessage.getSpeaker({actor: actor}),
                 roll: r,
                 rolls: [r],

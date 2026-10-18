@@ -5,6 +5,7 @@
 /* ----------------------------------------- */
 .sheet.journal-entry .journal-entry-content,
 .editor.prosemirror,
+.editor.prosemirror .editor-content,
 .mce-content-body {
 	background: #fff;
 }
@@ -34,6 +35,7 @@
 }
 
 .mce-content-body,
+.editor.prosemirror .editor-content,
 .journal-page-content{
 
 	h1,
@@ -362,4 +364,3 @@
 		background-image: url("../ui/icons/pins/dieuEnnemi.png");
 	}
 }
-

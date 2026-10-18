@@ -8,6 +8,7 @@ import {Origines} from "../controllers/origines.js";
 import {AriaRoll} from "../controllers/roll.js";
 import {Traversal} from "../utils/traversal.js";
 import { AriaItem } from "../items/item.js";
+import { getEditorEngine } from "../editor.js";
 
 
 export class AriaActorSheet extends ActorSheet {
@@ -150,7 +151,8 @@ async getData(options) {
       config: CONFIG.ARIA,
       actor: actorData,
       system: actorData.system,
-      items: actorData.items
+      items: actorData.items,
+      editorEngine: getEditorEngine()
     };
 
     // The Actor's data
@@ -303,14 +305,10 @@ async getData(options) {
         switch (entity.type) {
             case "competence" :
                 return this.actor.deleteEmbeddedDocuments("Item",[itemId]);
-                // return Competence.removeFromActor(this.actor, event, entity);
-                break;
             case "profession" :
                 return Profession.removeFromActor(this.actor, event, entity);
-                break;
             case "origine" :
                 return Origines.removeFromActor(this.actor, event, entity);
-                break;
             default: {
                 return this.actor.deleteEmbeddedDocuments("Item",[itemId]);
             }
@@ -391,7 +389,8 @@ async getData(options) {
                         if (extraOptions.cancelled) return;     
                         extraOptions.multi = 1;                   
                     }
-                    return AriaRoll.skillCheck(this.getData().system, this.actor, event,extraOptions.multi,extraOptions.rollType,extraOptions.bonusMalus);
+                    const data = await this.getData();
+                    return AriaRoll.skillCheck(data.system, this.actor, event,extraOptions.multi,extraOptions.rollType,extraOptions.bonusMalus);
                 }
                 else
                 {
@@ -401,11 +400,9 @@ async getData(options) {
                     if (extraOptions.cancelled) return;
                     if(extraOptions.bonusMalus == "0")
                         extraOptions.bonusMalus = "+0";
-                    return AriaRoll.skillCheck(this.getData().system, this.actor, event, extraOptions.multi,extraOptions.rollType,extraOptions.bonusMalus);
+                    const data = await this.getData();
+                    return AriaRoll.skillCheck(data.system, this.actor, event, extraOptions.multi,extraOptions.rollType,extraOptions.bonusMalus);
                 }
-               break;
-
-
             case "competencycheck" :
                 if(forceConfig)
                     {
@@ -415,10 +412,8 @@ async getData(options) {
                         if(extraOptions.bonusMalus == "0")
                             extraOptions.bonusMalus = "+0";
                     }
-                    return AriaRoll.competencyCheck(this.getData().items, this.actor, event,extraOptions.bonusMalus,extraOptions.rollType);
-                break;
-
-
+                    const data = await this.getData();
+                    return AriaRoll.competencyCheck(data.items, this.actor, event,extraOptions.bonusMalus,extraOptions.rollType);
             case "weapon" :
                 if(forceConfig)
                 {
@@ -426,7 +421,8 @@ async getData(options) {
                     extraOptions = await this.getRollOptions("systems/aria/templates/config/skill-options.hbs","Configuration du jet d'attaque",configJet);
                     if (extraOptions.cancelled) return;                    
                 }
-                return AriaRoll.rollWeapon(this.getData().system, this.actor, event,extraOptions.rollType);
+                const weaponData = await this.getData();
+                return AriaRoll.rollWeapon(weaponData.system, this.actor, event,extraOptions.rollType);
 
 
             case "initiative" :
@@ -436,7 +432,8 @@ async getData(options) {
                     extraOptions = await this.getRollOptions("systems/aria/templates/config/skill-options.hbs","Configuration du jet d'initiative",configJet);
                     if (extraOptions.cancelled) return;
                 }
-                return AriaRoll.rollInitiative(this.getData().system, this.actor, event,extraOptions.rollType);
+                const initiativeData = await this.getData();
+                return AriaRoll.rollInitiative(initiativeData.system, this.actor, event,extraOptions.rollType);
         }
     }
 
@@ -534,8 +531,8 @@ async getData(options) {
 
                 if(sourceActor.id && moveItem) {
                     if(!actor._id) {
-                        console.warn("no data._id?",target);
-                        return; 
+                        console.warn("Cannot transfer an item to an actor without an id.");
+                        return false;
                     }
 
                     if(sourceActor) {
@@ -579,7 +576,6 @@ async getData(options) {
                 this._addItemToInventory(itemData);
             }
 
-                return;
         }
     }
 

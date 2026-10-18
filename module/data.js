@@ -1,3 +1,16 @@
+const normalizeDocuments = content => {
+    const documents = Array.isArray(content) ? content : [content];
+    if (documents.length === 0) {
+        throw new TypeError("Import data must contain at least one document.");
+    }
+    for (const document of documents) {
+        if (typeof document !== "object" || document === null || Array.isArray(document)) {
+            throw new TypeError("Each imported document must be a JSON object.");
+        }
+    }
+    return documents;
+};
+
 export class DataLoader {
 
     /**
@@ -6,88 +19,96 @@ export class DataLoader {
      * @returns {Promise<any>}
      */
     static async loadJson(filepath) {
-        // Load an external JSON data file which contains data for import
         const response = await fetch(filepath);
+        if (!response.ok) {
+            throw new Error(`Failed to load import data from "${filepath}" (HTTP ${response.status}).`);
+        }
         return await response.json();
     }
 
     /**
      * Get a pack from a packName
-     * @param filepath
-     * @returns {Promise<any>}
+     * @param packName
      */
     static findPack(packName) {
-        // Reference a Compendium pack by it's collection ID
-        return game.packs.find(p => p.collection === `${System.name}.${packName}`);
+        return game.packs.find(pack => pack.collection === `${System.name}.${packName}`);
     }
 
     /**
      * Clears data from a given pack
      * @param pack
-     * @returns {Promise<boolean>}
+     * @returns {Promise<true>}
      */
     static async clearPack(pack) {
-        const packItems = await pack.getContent();
         try {
-            // Delete all current compendium entries
-            for (let item of packItems) {
-                await pack.deleteEntity(item.id);
+            const packItems = await pack.getDocuments();
+            for (const item of packItems) {
+                await item.delete();
             }
-        }
-        catch (ex) {
-            return false;
+        } catch (cause) {
+            throw new Error(`Failed to clear compendium pack "${pack.collection}".`, { cause });
         }
         return true;
     }
 
     /**
-     * Loads data from a JSON file into pack.
-     * JSON file should be located inside the System.dataPath folder and its name should the same as the pack name.
+     * Loads data from a JSON file into a compendium pack.
      * @param packName
      * @returns {Promise<void>}
      */
     static async loadData(packName) {
         console.info(`Importing ${packName}...`);
-        // Find pack from his pack name
-        let pack = this.findPack(packName);
+        let pack;
+        let wasLocked;
+        let restoreLock = false;
+        let importError;
 
-        // Get entity type to populate the proper collection
-        const entity = pack.metadata.entity;
-
-        // Unlock the pack
-        pack.locked = false;
-
-        // Clear the current pack
-        await this.clearPack(pack);
-
-        // Load data from JSON files
-        const filepath = `${System.dataPath}/${packName}.json`;
-        const content = await this.loadJson(filepath);
-        /* Import databases to compendiums */
-        switch(entity){
-            case "Item" : {
-                // Create temporary items from JSON
-                let newItems = await Item.create(content);
-                // Make sure items are iteratable
-                newItems = newItems instanceof Array ? newItems : [newItems];
-                for (let item of newItems) {
-                    // Import into compendium
-                    await pack.importEntity(item);
-                }
-                pack.locked = true;
-                break;
+        try {
+            pack = this.findPack(packName);
+            if (!pack) {
+                throw new Error(`Compendium pack "${packName}" was not found.`);
             }
-            case "Actor" : {
-                // Create temporary items from JSON
-                let newActors = await Actor.create(content);
-                // Make sure items are iteratable
-                newActors = newActors instanceof Array ? newActors : [newActors];
-                for (let actor of newActors) {
-                    // Import into compendium
-                    await pack.importEntity(actor);
+
+            const documentClasses = { Item, Actor };
+            const DocumentClass = documentClasses[pack.documentName];
+            if (!DocumentClass) {
+                throw new TypeError(`Unsupported compendium document type "${pack.documentName}".`);
+            }
+
+            const filepath = `${System.dataPath}/${packName}.json`;
+            const documents = normalizeDocuments(await this.loadJson(filepath));
+            for (const documentData of documents) {
+                new DocumentClass(documentData).validate({ strict: true });
+            }
+            wasLocked = pack.locked;
+            if (wasLocked) {
+                restoreLock = true;
+                await pack.configure({ locked: false });
+            }
+            await this.clearPack(pack);
+            await DocumentClass.createDocuments(documents, { pack: pack.collection });
+        } catch (error) {
+            importError = error;
+            globalThis.ui.notifications.error(
+                `Unable to import data into compendium "${packName}": ${error.message}`,
+            );
+            throw error;
+        } finally {
+            if (restoreLock) {
+                try {
+                    await pack.configure({ locked: wasLocked });
+                } catch (restoreError) {
+                    globalThis.ui.notifications.error(
+                        `Unable to restore the lock state for compendium "${packName}": ${restoreError.message}`,
+                    );
+                    if (importError) {
+                        throw new AggregateError(
+                            [importError, restoreError],
+                            `Import failed and compendium "${packName}" could not be relocked.`,
+                        );
+                    }
+                    throw restoreError;
                 }
-                pack.locked = true;
-                break;
             }
         }
         console.info(`${packName} imported.`);

@@ -217,6 +217,7 @@ strong {
 /* ----------------------------------------- */
 .sheet.journal-entry .journal-entry-content,
 .editor.prosemirror,
+.editor.prosemirror .editor-content,
 .mce-content-body {
   background: #fff;
 }
@@ -248,6 +249,12 @@ strong {
 .mce-content-body h4,
 .mce-content-body h5,
 .mce-content-body h6,
+.editor.prosemirror .editor-content h1,
+.editor.prosemirror .editor-content h2,
+.editor.prosemirror .editor-content h3,
+.editor.prosemirror .editor-content h4,
+.editor.prosemirror .editor-content h5,
+.editor.prosemirror .editor-content h6,
 .journal-page-content h1,
 .journal-page-content h2,
 .journal-page-content h3,
@@ -264,6 +271,7 @@ strong {
   position: relative;
 }
 .mce-content-body h1,
+.editor.prosemirror .editor-content h1,
 .journal-page-content h1 {
   text-align: center;
   text-transform: uppercase;
@@ -272,6 +280,7 @@ strong {
   font-family: "CharlemagneStd", serif;
 }
 .mce-content-body h2,
+.editor.prosemirror .editor-content h2,
 .journal-page-content h2 {
   text-align: center;
   text-transform: uppercase;
@@ -281,6 +290,8 @@ strong {
 }
 .mce-content-body h1::after,
 .mce-content-body h2::after,
+.editor.prosemirror .editor-content h1::after,
+.editor.prosemirror .editor-content h2::after,
 .journal-page-content h1::after,
 .journal-page-content h2::after {
   content: "";
@@ -291,22 +302,26 @@ strong {
   transform: translateX(-50%);
 }
 .mce-content-body h1::after,
+.editor.prosemirror .editor-content h1::after,
 .journal-page-content h1::after {
   background: #2c3f45;
   width: 20%;
 }
 .mce-content-body h2::after,
+.editor.prosemirror .editor-content h2::after,
 .journal-page-content h2::after {
   background: #5a6a72;
   width: 10%;
 }
 .mce-content-body h3,
+.editor.prosemirror .editor-content h3,
 .journal-page-content h3 {
   color: #426266;
   font-size: 1.8rem;
   font-family: "CaxtonStd-Book", serif;
 }
 .mce-content-body h4,
+.editor.prosemirror .editor-content h4,
 .journal-page-content h4 {
   color: #8897a0;
   font-size: 1.6rem;
@@ -314,6 +329,7 @@ strong {
   font-family: "CaxtonStd-Book", serif;
 }
 .mce-content-body h5,
+.editor.prosemirror .editor-content h5,
 .journal-page-content h5 {
   font-size: 1.4rem;
   color: #bea185;
@@ -322,6 +338,7 @@ strong {
   font-family: "CaxtonStd-LightItalic", serif;
 }
 .mce-content-body h6,
+.editor.prosemirror .editor-content h6,
 .journal-page-content h6 {
   font-size: 1.2rem;
   color: #8998a0;
@@ -436,6 +453,114 @@ strong {
 .mce-content-body .aria-quete-ennemi h4,
 .mce-content-body .aria-quete-ennemi h5,
 .mce-content-body .aria-quete-ennemi h6,
+.editor.prosemirror .editor-content .aria-info h1,
+.editor.prosemirror .editor-content .aria-info h2,
+.editor.prosemirror .editor-content .aria-info h3,
+.editor.prosemirror .editor-content .aria-info h4,
+.editor.prosemirror .editor-content .aria-info h5,
+.editor.prosemirror .editor-content .aria-info h6,
+.editor.prosemirror .editor-content .aria-texte h1,
+.editor.prosemirror .editor-content .aria-texte h2,
+.editor.prosemirror .editor-content .aria-texte h3,
+.editor.prosemirror .editor-content .aria-texte h4,
+.editor.prosemirror .editor-content .aria-texte h5,
+.editor.prosemirror .editor-content .aria-texte h6,
+.editor.prosemirror .editor-content .aria-regle h1,
+.editor.prosemirror .editor-content .aria-regle h2,
+.editor.prosemirror .editor-content .aria-regle h3,
+.editor.prosemirror .editor-content .aria-regle h4,
+.editor.prosemirror .editor-content .aria-regle h5,
+.editor.prosemirror .editor-content .aria-regle h6,
+.editor.prosemirror .editor-content .secret h1,
+.editor.prosemirror .editor-content .secret h2,
+.editor.prosemirror .editor-content .secret h3,
+.editor.prosemirror .editor-content .secret h4,
+.editor.prosemirror .editor-content .secret h5,
+.editor.prosemirror .editor-content .secret h6,
+.editor.prosemirror .editor-content .aria-point-cle h1,
+.editor.prosemirror .editor-content .aria-point-cle h2,
+.editor.prosemirror .editor-content .aria-point-cle h3,
+.editor.prosemirror .editor-content .aria-point-cle h4,
+.editor.prosemirror .editor-content .aria-point-cle h5,
+.editor.prosemirror .editor-content .aria-point-cle h6,
+.editor.prosemirror .editor-content .aria-quete-principale h1,
+.editor.prosemirror .editor-content .aria-quete-principale h2,
+.editor.prosemirror .editor-content .aria-quete-principale h3,
+.editor.prosemirror .editor-content .aria-quete-principale h4,
+.editor.prosemirror .editor-content .aria-quete-principale h5,
+.editor.prosemirror .editor-content .aria-quete-principale h6,
+.editor.prosemirror .editor-content .aria-quete-parallele h1,
+.editor.prosemirror .editor-content .aria-quete-parallele h2,
+.editor.prosemirror .editor-content .aria-quete-parallele h3,
+.editor.prosemirror .editor-content .aria-quete-parallele h4,
+.editor.prosemirror .editor-content .aria-quete-parallele h5,
+.editor.prosemirror .editor-content .aria-quete-parallele h6,
+.editor.prosemirror .editor-content .aria-quete-personnelle h1,
+.editor.prosemirror .editor-content .aria-quete-personnelle h2,
+.editor.prosemirror .editor-content .aria-quete-personnelle h3,
+.editor.prosemirror .editor-content .aria-quete-personnelle h4,
+.editor.prosemirror .editor-content .aria-quete-personnelle h5,
+.editor.prosemirror .editor-content .aria-quete-personnelle h6,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h1,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h2,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h3,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h4,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h5,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h6,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h1,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h2,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h3,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h4,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h5,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h6,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h1,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h2,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h3,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h4,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h5,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h6,
+.editor.prosemirror .editor-content .aria-quete-resolue h1,
+.editor.prosemirror .editor-content .aria-quete-resolue h2,
+.editor.prosemirror .editor-content .aria-quete-resolue h3,
+.editor.prosemirror .editor-content .aria-quete-resolue h4,
+.editor.prosemirror .editor-content .aria-quete-resolue h5,
+.editor.prosemirror .editor-content .aria-quete-resolue h6,
+.editor.prosemirror .editor-content .aria-quete-exception h1,
+.editor.prosemirror .editor-content .aria-quete-exception h2,
+.editor.prosemirror .editor-content .aria-quete-exception h3,
+.editor.prosemirror .editor-content .aria-quete-exception h4,
+.editor.prosemirror .editor-content .aria-quete-exception h5,
+.editor.prosemirror .editor-content .aria-quete-exception h6,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h1,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h2,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h3,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h4,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h5,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h6,
+.editor.prosemirror .editor-content .aria-quete-magicien h1,
+.editor.prosemirror .editor-content .aria-quete-magicien h2,
+.editor.prosemirror .editor-content .aria-quete-magicien h3,
+.editor.prosemirror .editor-content .aria-quete-magicien h4,
+.editor.prosemirror .editor-content .aria-quete-magicien h5,
+.editor.prosemirror .editor-content .aria-quete-magicien h6,
+.editor.prosemirror .editor-content .aria-quete-noble h1,
+.editor.prosemirror .editor-content .aria-quete-noble h2,
+.editor.prosemirror .editor-content .aria-quete-noble h3,
+.editor.prosemirror .editor-content .aria-quete-noble h4,
+.editor.prosemirror .editor-content .aria-quete-noble h5,
+.editor.prosemirror .editor-content .aria-quete-noble h6,
+.editor.prosemirror .editor-content .aria-quete-combattant h1,
+.editor.prosemirror .editor-content .aria-quete-combattant h2,
+.editor.prosemirror .editor-content .aria-quete-combattant h3,
+.editor.prosemirror .editor-content .aria-quete-combattant h4,
+.editor.prosemirror .editor-content .aria-quete-combattant h5,
+.editor.prosemirror .editor-content .aria-quete-combattant h6,
+.editor.prosemirror .editor-content .aria-quete-ennemi h1,
+.editor.prosemirror .editor-content .aria-quete-ennemi h2,
+.editor.prosemirror .editor-content .aria-quete-ennemi h3,
+.editor.prosemirror .editor-content .aria-quete-ennemi h4,
+.editor.prosemirror .editor-content .aria-quete-ennemi h5,
+.editor.prosemirror .editor-content .aria-quete-ennemi h6,
 .journal-page-content .aria-info h1,
 .journal-page-content .aria-info h2,
 .journal-page-content .aria-info h3,
@@ -566,6 +691,24 @@ strong {
 .mce-content-body .aria-quete-noble h1::after,
 .mce-content-body .aria-quete-combattant h1::after,
 .mce-content-body .aria-quete-ennemi h1::after,
+.editor.prosemirror .editor-content .aria-info h1::after,
+.editor.prosemirror .editor-content .aria-texte h1::after,
+.editor.prosemirror .editor-content .aria-regle h1::after,
+.editor.prosemirror .editor-content .secret h1::after,
+.editor.prosemirror .editor-content .aria-point-cle h1::after,
+.editor.prosemirror .editor-content .aria-quete-principale h1::after,
+.editor.prosemirror .editor-content .aria-quete-parallele h1::after,
+.editor.prosemirror .editor-content .aria-quete-personnelle h1::after,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h1::after,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h1::after,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h1::after,
+.editor.prosemirror .editor-content .aria-quete-resolue h1::after,
+.editor.prosemirror .editor-content .aria-quete-exception h1::after,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h1::after,
+.editor.prosemirror .editor-content .aria-quete-magicien h1::after,
+.editor.prosemirror .editor-content .aria-quete-noble h1::after,
+.editor.prosemirror .editor-content .aria-quete-combattant h1::after,
+.editor.prosemirror .editor-content .aria-quete-ennemi h1::after,
 .journal-page-content .aria-info h1::after,
 .journal-page-content .aria-texte h1::after,
 .journal-page-content .aria-regle h1::after,
@@ -604,6 +747,24 @@ strong {
 .mce-content-body .aria-quete-noble h2::after,
 .mce-content-body .aria-quete-combattant h2::after,
 .mce-content-body .aria-quete-ennemi h2::after,
+.editor.prosemirror .editor-content .aria-info h2::after,
+.editor.prosemirror .editor-content .aria-texte h2::after,
+.editor.prosemirror .editor-content .aria-regle h2::after,
+.editor.prosemirror .editor-content .secret h2::after,
+.editor.prosemirror .editor-content .aria-point-cle h2::after,
+.editor.prosemirror .editor-content .aria-quete-principale h2::after,
+.editor.prosemirror .editor-content .aria-quete-parallele h2::after,
+.editor.prosemirror .editor-content .aria-quete-personnelle h2::after,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h2::after,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h2::after,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h2::after,
+.editor.prosemirror .editor-content .aria-quete-resolue h2::after,
+.editor.prosemirror .editor-content .aria-quete-exception h2::after,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h2::after,
+.editor.prosemirror .editor-content .aria-quete-magicien h2::after,
+.editor.prosemirror .editor-content .aria-quete-noble h2::after,
+.editor.prosemirror .editor-content .aria-quete-combattant h2::after,
+.editor.prosemirror .editor-content .aria-quete-ennemi h2::after,
 .journal-page-content .aria-info h2::after,
 .journal-page-content .aria-texte h2::after,
 .journal-page-content .aria-regle h2::after,
@@ -630,6 +791,12 @@ strong {
 .mce-content-body .aria-texte h4,
 .mce-content-body .aria-texte h5,
 .mce-content-body .aria-texte h6,
+.editor.prosemirror .editor-content .aria-texte h1,
+.editor.prosemirror .editor-content .aria-texte h2,
+.editor.prosemirror .editor-content .aria-texte h3,
+.editor.prosemirror .editor-content .aria-texte h4,
+.editor.prosemirror .editor-content .aria-texte h5,
+.editor.prosemirror .editor-content .aria-texte h6,
 .journal-page-content .aria-texte h1,
 .journal-page-content .aria-texte h2,
 .journal-page-content .aria-texte h3,
@@ -644,6 +811,12 @@ strong {
 .mce-content-body .aria-regle h4,
 .mce-content-body .aria-regle h5,
 .mce-content-body .aria-regle h6,
+.editor.prosemirror .editor-content .aria-regle h1,
+.editor.prosemirror .editor-content .aria-regle h2,
+.editor.prosemirror .editor-content .aria-regle h3,
+.editor.prosemirror .editor-content .aria-regle h4,
+.editor.prosemirror .editor-content .aria-regle h5,
+.editor.prosemirror .editor-content .aria-regle h6,
 .journal-page-content .aria-regle h1,
 .journal-page-content .aria-regle h2,
 .journal-page-content .aria-regle h3,
@@ -748,6 +921,102 @@ strong {
 .mce-content-body .aria-quete-ennemi h4,
 .mce-content-body .aria-quete-ennemi h5,
 .mce-content-body .aria-quete-ennemi h6,
+.editor.prosemirror .editor-content .aria-info h1,
+.editor.prosemirror .editor-content .aria-info h2,
+.editor.prosemirror .editor-content .aria-info h3,
+.editor.prosemirror .editor-content .aria-info h4,
+.editor.prosemirror .editor-content .aria-info h5,
+.editor.prosemirror .editor-content .aria-info h6,
+.editor.prosemirror .editor-content .secret h1,
+.editor.prosemirror .editor-content .secret h2,
+.editor.prosemirror .editor-content .secret h3,
+.editor.prosemirror .editor-content .secret h4,
+.editor.prosemirror .editor-content .secret h5,
+.editor.prosemirror .editor-content .secret h6,
+.editor.prosemirror .editor-content .aria-point-cle h1,
+.editor.prosemirror .editor-content .aria-point-cle h2,
+.editor.prosemirror .editor-content .aria-point-cle h3,
+.editor.prosemirror .editor-content .aria-point-cle h4,
+.editor.prosemirror .editor-content .aria-point-cle h5,
+.editor.prosemirror .editor-content .aria-point-cle h6,
+.editor.prosemirror .editor-content .aria-quete-principale h1,
+.editor.prosemirror .editor-content .aria-quete-principale h2,
+.editor.prosemirror .editor-content .aria-quete-principale h3,
+.editor.prosemirror .editor-content .aria-quete-principale h4,
+.editor.prosemirror .editor-content .aria-quete-principale h5,
+.editor.prosemirror .editor-content .aria-quete-principale h6,
+.editor.prosemirror .editor-content .aria-quete-parallele h1,
+.editor.prosemirror .editor-content .aria-quete-parallele h2,
+.editor.prosemirror .editor-content .aria-quete-parallele h3,
+.editor.prosemirror .editor-content .aria-quete-parallele h4,
+.editor.prosemirror .editor-content .aria-quete-parallele h5,
+.editor.prosemirror .editor-content .aria-quete-parallele h6,
+.editor.prosemirror .editor-content .aria-quete-personnelle h1,
+.editor.prosemirror .editor-content .aria-quete-personnelle h2,
+.editor.prosemirror .editor-content .aria-quete-personnelle h3,
+.editor.prosemirror .editor-content .aria-quete-personnelle h4,
+.editor.prosemirror .editor-content .aria-quete-personnelle h5,
+.editor.prosemirror .editor-content .aria-quete-personnelle h6,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h1,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h2,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h3,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h4,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h5,
+.editor.prosemirror .editor-content .aria-quete-principale-fin h6,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h1,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h2,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h3,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h4,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h5,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin h6,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h1,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h2,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h3,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h4,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h5,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin h6,
+.editor.prosemirror .editor-content .aria-quete-resolue h1,
+.editor.prosemirror .editor-content .aria-quete-resolue h2,
+.editor.prosemirror .editor-content .aria-quete-resolue h3,
+.editor.prosemirror .editor-content .aria-quete-resolue h4,
+.editor.prosemirror .editor-content .aria-quete-resolue h5,
+.editor.prosemirror .editor-content .aria-quete-resolue h6,
+.editor.prosemirror .editor-content .aria-quete-exception h1,
+.editor.prosemirror .editor-content .aria-quete-exception h2,
+.editor.prosemirror .editor-content .aria-quete-exception h3,
+.editor.prosemirror .editor-content .aria-quete-exception h4,
+.editor.prosemirror .editor-content .aria-quete-exception h5,
+.editor.prosemirror .editor-content .aria-quete-exception h6,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h1,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h2,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h3,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h4,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h5,
+.editor.prosemirror .editor-content .aria-quete-alchimiste h6,
+.editor.prosemirror .editor-content .aria-quete-magicien h1,
+.editor.prosemirror .editor-content .aria-quete-magicien h2,
+.editor.prosemirror .editor-content .aria-quete-magicien h3,
+.editor.prosemirror .editor-content .aria-quete-magicien h4,
+.editor.prosemirror .editor-content .aria-quete-magicien h5,
+.editor.prosemirror .editor-content .aria-quete-magicien h6,
+.editor.prosemirror .editor-content .aria-quete-noble h1,
+.editor.prosemirror .editor-content .aria-quete-noble h2,
+.editor.prosemirror .editor-content .aria-quete-noble h3,
+.editor.prosemirror .editor-content .aria-quete-noble h4,
+.editor.prosemirror .editor-content .aria-quete-noble h5,
+.editor.prosemirror .editor-content .aria-quete-noble h6,
+.editor.prosemirror .editor-content .aria-quete-combattant h1,
+.editor.prosemirror .editor-content .aria-quete-combattant h2,
+.editor.prosemirror .editor-content .aria-quete-combattant h3,
+.editor.prosemirror .editor-content .aria-quete-combattant h4,
+.editor.prosemirror .editor-content .aria-quete-combattant h5,
+.editor.prosemirror .editor-content .aria-quete-combattant h6,
+.editor.prosemirror .editor-content .aria-quete-ennemi h1,
+.editor.prosemirror .editor-content .aria-quete-ennemi h2,
+.editor.prosemirror .editor-content .aria-quete-ennemi h3,
+.editor.prosemirror .editor-content .aria-quete-ennemi h4,
+.editor.prosemirror .editor-content .aria-quete-ennemi h5,
+.editor.prosemirror .editor-content .aria-quete-ennemi h6,
 .journal-page-content .aria-info h1,
 .journal-page-content .aria-info h2,
 .journal-page-content .aria-info h3,
@@ -847,6 +1116,7 @@ strong {
   color: #ffffff !important;
 }
 .mce-content-body .aria-block,
+.editor.prosemirror .editor-content .aria-block,
 .journal-page-content .aria-block {
   margin-top: 15px;
   margin-bottom: 10px;
@@ -856,6 +1126,7 @@ strong {
   border-bottom: 0px !important;
 }
 .mce-content-body .aria-block::before,
+.editor.prosemirror .editor-content .aria-block::before,
 .journal-page-content .aria-block::before {
   content: "";
   background-size: 50px 50px;
@@ -868,6 +1139,7 @@ strong {
   margin-top: -9px;
 }
 .mce-content-body .aria-texte,
+.editor.prosemirror .editor-content .aria-texte,
 .journal-page-content .aria-texte {
   background: #dce2e6;
   color: #5a6a72;
@@ -875,18 +1147,22 @@ strong {
   font-weight: normal;
 }
 .mce-content-body .aria-texte::before,
+.editor.prosemirror .editor-content .aria-texte::before,
 .journal-page-content .aria-texte::before {
   background-image: url("../ui/icons/pins/texte.png");
 }
 .mce-content-body .aria-regle,
+.editor.prosemirror .editor-content .aria-regle,
 .journal-page-content .aria-regle {
   background: #f2ebe3;
 }
 .mce-content-body .aria-regle::before,
+.editor.prosemirror .editor-content .aria-regle::before,
 .journal-page-content .aria-regle::before {
   background-image: url("../ui/icons/pins/regles.png");
 }
 .mce-content-body .aria-info,
+.editor.prosemirror .editor-content .aria-info,
 .journal-page-content .aria-info {
   margin-top: 15px;
   margin-bottom: 10px;
@@ -911,6 +1187,22 @@ strong {
 .mce-content-body .aria-quete-combattant,
 .mce-content-body .aria-quete-ennemi,
 .mce-content-body .secret,
+.editor.prosemirror .editor-content .aria-info,
+.editor.prosemirror .editor-content .aria-point-cle,
+.editor.prosemirror .editor-content .aria-quete-principale,
+.editor.prosemirror .editor-content .aria-quete-parallele,
+.editor.prosemirror .editor-content .aria-quete-personnelle,
+.editor.prosemirror .editor-content .aria-quete-principale-fin,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin,
+.editor.prosemirror .editor-content .aria-quete-resolue,
+.editor.prosemirror .editor-content .aria-quete-exception,
+.editor.prosemirror .editor-content .aria-quete-alchimiste,
+.editor.prosemirror .editor-content .aria-quete-magicien,
+.editor.prosemirror .editor-content .aria-quete-noble,
+.editor.prosemirror .editor-content .aria-quete-combattant,
+.editor.prosemirror .editor-content .aria-quete-ennemi,
+.editor.prosemirror .editor-content .secret,
 .journal-page-content .aria-info,
 .journal-page-content .aria-point-cle,
 .journal-page-content .aria-quete-principale,
@@ -931,6 +1223,7 @@ strong {
   color: #ffffff;
 }
 .mce-content-body .secret,
+.editor.prosemirror .editor-content .secret,
 .journal-page-content .secret {
   margin-top: 15px;
   margin-bottom: 10px;
@@ -940,10 +1233,12 @@ strong {
   border-bottom: 0px !important;
 }
 .mce-content-body .secret.revealed,
+.editor.prosemirror .editor-content .secret.revealed,
 .journal-page-content .secret.revealed {
   background: #8a9b89 !important;
 }
 .mce-content-body .secret::before,
+.editor.prosemirror .editor-content .secret::before,
 .journal-page-content .secret::before {
   background-image: url("../ui/icons/pins/MJ.png");
   content: "";
@@ -957,6 +1252,7 @@ strong {
   margin-top: -9px;
 }
 .mce-content-body .secret.revealed::before,
+.editor.prosemirror .editor-content .secret.revealed::before,
 .journal-page-content .secret.revealed::before {
   background-image: url("../ui/icons/pins/UnlockMJ.png");
   content: "";
@@ -970,58 +1266,72 @@ strong {
   margin-top: -9px;
 }
 .mce-content-body .aria-point-cle::before,
+.editor.prosemirror .editor-content .aria-point-cle::before,
 .journal-page-content .aria-point-cle::before {
   background-image: url("../ui/icons/pins/pointCle.png");
 }
 .mce-content-body .aria-quete-principale::before,
+.editor.prosemirror .editor-content .aria-quete-principale::before,
 .journal-page-content .aria-quete-principale::before {
   background-image: url("../ui/icons/pins/quetePrincipale.png");
 }
 .mce-content-body .aria-quete-parallele::before,
+.editor.prosemirror .editor-content .aria-quete-parallele::before,
 .journal-page-content .aria-quete-parallele::before {
   background-image: url("../ui/icons/pins/queteSecondaire.png");
 }
 .mce-content-body .aria-quete-personnelle::before,
+.editor.prosemirror .editor-content .aria-quete-personnelle::before,
 .journal-page-content .aria-quete-personnelle::before {
   background-image: url("../ui/icons/pins/quetePersonnelle.png");
 }
 .mce-content-body .aria-quete-principale-fin::before,
+.editor.prosemirror .editor-content .aria-quete-principale-fin::before,
 .journal-page-content .aria-quete-principale-fin::before {
   background-image: url("../ui/icons/pins/achevementPrincipale.png");
 }
 .mce-content-body .aria-quete-parallele-fin::before,
+.editor.prosemirror .editor-content .aria-quete-parallele-fin::before,
 .journal-page-content .aria-quete-parallele-fin::before {
   background-image: url("../ui/icons/pins/achevementSecondaire.png");
 }
 .mce-content-body .aria-quete-personnelle-fin::before,
+.editor.prosemirror .editor-content .aria-quete-personnelle-fin::before,
 .journal-page-content .aria-quete-personnelle-fin::before {
   background-image: url("../ui/icons/pins/achevementPersonnel.png");
 }
 .mce-content-body .aria-quete-resolue::before,
+.editor.prosemirror .editor-content .aria-quete-resolue::before,
 .journal-page-content .aria-quete-resolue::before {
   background-image: url("../ui/icons/pins/queteAchevee.png");
 }
 .mce-content-body .aria-quete-exception::before,
+.editor.prosemirror .editor-content .aria-quete-exception::before,
 .journal-page-content .aria-quete-exception::before {
   background-image: url("../ui/icons/pins/persoException.png");
 }
 .mce-content-body .aria-quete-alchimiste::before,
+.editor.prosemirror .editor-content .aria-quete-alchimiste::before,
 .journal-page-content .aria-quete-alchimiste::before {
   background-image: url("../ui/icons/pins/alchimiste.png");
 }
 .mce-content-body .aria-quete-magicien::before,
+.editor.prosemirror .editor-content .aria-quete-magicien::before,
 .journal-page-content .aria-quete-magicien::before {
   background-image: url("../ui/icons/pins/magicien.png");
 }
 .mce-content-body .aria-quete-noble::before,
+.editor.prosemirror .editor-content .aria-quete-noble::before,
 .journal-page-content .aria-quete-noble::before {
   background-image: url("../ui/icons/pins/noble.png");
 }
 .mce-content-body .aria-quete-combattant::before,
+.editor.prosemirror .editor-content .aria-quete-combattant::before,
 .journal-page-content .aria-quete-combattant::before {
   background-image: url("../ui/icons/pins/combattant.png");
 }
 .mce-content-body .aria-quete-ennemi::before,
+.editor.prosemirror .editor-content .aria-quete-ennemi::before,
 .journal-page-content .aria-quete-ennemi::before {
   background-image: url("../ui/icons/pins/dieuEnnemi.png");
 }

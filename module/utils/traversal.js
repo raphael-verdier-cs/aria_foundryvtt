@@ -8,13 +8,14 @@ export class Traversal {
         else if(type === "journal") entity = game.journal.get(id);
         // Case 2 - Import from a Compendium pack
         if (!entity && pack) {
-            await game.packs.get(pack).getEntity(id).then(e => entity = e);
+            const compendium = game.packs.get(pack);
+            if (compendium) entity = await compendium.getDocument(id);
         }
         return entity;
     }
 
-    static getAllEntitiesOfType(type, pack) {
-        const compendium = game.packs.get(pack).getContent();
+    static async getAllEntitiesOfType(type, pack) {
+        const compendium = await game.packs.get(pack).getDocuments();
         const ingame = game.items.filter(item => item.type === type);
         return ingame.concat(compendium);
     }

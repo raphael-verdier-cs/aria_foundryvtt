@@ -5,6 +5,7 @@
 import {ArrayUtils} from "../utils/array-utils.js";
 import {Traversal} from "../utils/traversal.js";
 import {System} from "../config.js";
+import { getEditorEngine } from "../editor.js";
 
 export class GlobalAriaItemSheet extends ItemSheet {
 
@@ -206,6 +207,7 @@ export class GlobalAriaItemSheet extends ItemSheet {
         data.descriptionHTML = await TextEditor.enrichHTML(data.system.description, {
             async: true
           });
+        data.editorEngine = getEditorEngine();
         
         return data;
     }

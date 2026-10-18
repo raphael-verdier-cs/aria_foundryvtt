@@ -11,7 +11,7 @@
       const hpBonus = this.actor.system.attributes.hp.bonus || 0;
 
       data.value = ( (hpMax - hpBonus ) || 0);
-      data.max = (hpMax || 0);
+      data.max = hpMax;
 
 
       if(data.value < 0)

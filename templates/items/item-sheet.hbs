@@ -28,7 +28,7 @@
         <section class="sheet-body">
             <div class="form-header">{{localize "ARIA.details.description"}}</div>
             <div class="flexrow description">
-                {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
+                {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable engine=editorEngine}}
             </div>
             <div class="details">
                 {{#if (equals item.type "item")}}

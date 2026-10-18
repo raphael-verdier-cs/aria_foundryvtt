@@ -1,5 +1,3 @@
-import {Traversal} from "../utils/traversal.js";
-
 export class Profession {
 
     static addToActor(actor, event, itemData) {

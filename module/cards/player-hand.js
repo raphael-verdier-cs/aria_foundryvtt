@@ -45,7 +45,7 @@ export class AriaPlayerHand extends CardHand {
             case "play":
                 await card.pass(actorDiscard);
                 card.toMessage({
-                        user: game.user.id,
+                        author: game.user.id,
                         speaker: ChatMessage.getSpeaker({actor: handActor}),
                         content: `<div class="card-draw flexrow"><img style="width:75px" src="${card.img}"><span class="card-name">&nbsp;&nbsp;Joue ${card.name}.</span></div><span class="card-desc"><br/>${card.description}</span>
             </div>` })
@@ -61,7 +61,7 @@ export class AriaPlayerHand extends CardHand {
             case "discard":
                 await card.pass(actorDiscard);
                 card.toMessage({
-                         user: game.user.id,
+                         author: game.user.id,
                         speaker: ChatMessage.getSpeaker({actor: handActor}),
                         content: `<div class="card-draw flexrow"><img style="width:75px" src="${card.img}"><span class="card-name">Jette ${card.name}</span>
               </div>` });
@@ -74,15 +74,13 @@ export class AriaPlayerHand extends CardHand {
                     const [firstCardKey] = actorDeck.cards.keys(); // need to grab a card to get toMessage access
                     const card = actorDeck.cards.get(firstCardKey);
 
-                    card.toMessage({ user: game.user.id,
+                    card.toMessage({ author: game.user.id,
                         speaker: ChatMessage.getSpeaker({actor: handActor}),
                         content: `<div class="card-draw flexrow"><h4 class="card-name">Pioche.</h4></div>` });
                 }
                 return this.object.draw(actorDeck, 1, { face: 1 });
             case "pass":
-                await this.playerPassDialog(card);
-                // await game.combats.apps[0].viewed.resetAll();
-                return;
+                return this.object.passDialog();
             case "create":
                 return cls.createDialog({}, { parent: this.object, pack: this.object.pack });
             case "edit":
@@ -93,8 +91,6 @@ export class AriaPlayerHand extends CardHand {
                 return this.object.dealDialog();
             case "draw":
                 return this.object.drawDialog();
-            case "pass":
-                return this.object.passDialog();
             case "reset":
                 this._sortStandard = true;
                 return this.object.recall();

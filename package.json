@@ -6,7 +6,9 @@
     "build": "gulp",
     "compile": "gulp css",
     "watch": "gulp",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=module/**/*.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100"
   },
   "browserslist": [
     "last 3 versions"

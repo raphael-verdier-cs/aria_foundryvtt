@@ -19,19 +19,8 @@ export class AriaSkillRoll {
     async roll(actor,rollType){
         const messageTemplate = "systems/aria/templates/chat/carac-card.hbs";
 
-        let rollData = {
-            user: game.user.id,
-            speaker: ChatMessage.getSpeaker({actor: actor}),
-        };
-
         let r = new Roll(this._formula);
         await r.evaluate();
-        //r.evaluate({async:false});
-        //r.evaluateSync({minimize:false, maximize:false, allowStrings:false, strict:true});
-
-        let renderedRoll = await r.render();
-
-        
         
         const result = r.total;
         this._isSuccess = result <= this._cmpValue;
@@ -60,8 +49,7 @@ export class AriaSkillRoll {
         };
 
         let chatData = {
-            user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.ROLL,
+            author: game.user.id,
             speaker: ChatMessage.getSpeaker({actor: actor}),
             roll: r,
             rolls: [r],

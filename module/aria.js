@@ -21,6 +21,7 @@ import {AriaPlayerHand} from "./cards/player-hand.js";
 import {AriaCards} from "./cards/cards.js";
 
 import { registerHandlebarsHelpers } from "./helpers.js";
+import { registerAriaEditorOptions } from "./editor.js";
 
 import {Macros} from "./system/macros.js";
 
@@ -99,7 +100,7 @@ Hooks.once("init", async function () {
     // Register Handlebars helpers
     registerHandlebarsHelpers();
 
-    CONFIG.TinyMCE.content_css.push("/systems/aria/css/aria_TinyMCE.css");
+    registerAriaEditorOptions();
 
     console.info("Aria : Init Done");
 
@@ -113,17 +114,11 @@ Hooks.once("setup", function() {
         "itemProperties", "itemSubCategories", "languages"
       ];
 
-  // Exclude some from sorting where the default order matters
-  const noSort = [
-    "itemProperties", "itemSubCategories", "languages"
-  ];
-
-  // Localize and sort CONFIG objects
+  // Localize CONFIG objects without changing their declared order.
   for ( let o of toLocalize ) {
     const localized = Object.entries(CONFIG.ARIA[o]).map(e => {
       return [e[0], game.i18n.localize(e[1])];
     });
-    if ( !noSort.includes(o) ) localized.sort((a, b) => a[1].localeCompare(b[1]));
     CONFIG.ARIA[o] = localized.reduce((obj, e) => {
       obj[e[0]] = e[1];
       return obj;
@@ -154,30 +149,6 @@ Hooks.once("ready", async () => {
       game.settings.set("aria", "ariaVersion", "aria");
       console.info("Aria Skin Reset : "+game.settings.get("aria", "ariaVersion"));
     }
-
-    CONFIG.TinyMCE.style_formats.push({
-      title: "Aria",
-      items: [
-        { title: "Info", block: "section", classes: "aria-info", wrapper: true },
-        { title: "Texte", block: "section", classes: "aria-block aria-texte", wrapper: true },
-        { title: "Règle", block: "section", classes: "aria-block aria-regle", wrapper: true },
-        { title: "Point clé", block: "section", classes: "aria-block aria-point-cle", wrapper: true },
-        { title: "Secret", block: "section", classes: "secret aria-block aria-secret", wrapper: true },
-        { title: "Quête principale", block: "section", classes: "aria-block aria-quete-principale", wrapper: true },
-        { title: "Quête parallèle", block: "section", classes: "aria-block aria-quete-parallele", wrapper: true },
-        { title: "Quête personnelle", block: "section", classes: "aria-block aria-quete-personnelle", wrapper: true },
-        { title: "Quête principale fin", block: "section", classes: "aria-block aria-quete-principale-fin", wrapper: true },
-        { title: "Quête parallèle fin", block: "section", classes: "aria-block aria-quete-parallele-fin", wrapper: true },
-        { title: "Quête personnelle fin", block: "section", classes: "aria-block aria-quete-personnelle-fin", wrapper: true },
-        { title: "Quête résolue", block: "section", classes: "aria-block aria-quete-resolue", wrapper: true },
-        { title: "Quête Personnage Exception", block: "section", classes: "aria-block aria-quete-exception", wrapper: true },
-        { title: "Quête Alchimiste", block: "section", classes: "aria-block aria-quete-alchimiste", wrapper: true },
-        { title: "Quête Magicien", block: "section", classes: "aria-block aria-quete-magicien", wrapper: true },
-        { title: "Quête Noble", block: "section", classes: "aria-block aria-quete-noble", wrapper: true },
-        { title: "Quête Combattant", block: "section", classes: "aria-block aria-quete-combattant", wrapper: true },
-        { title: "Quête Dieu Ennemi", block: "section", classes: "aria-block aria-quete-ennemi", wrapper: true },
-      ],
-    });
 
     await game.aria.config.getProfessions();
     await game.aria.config.getOrigines();
