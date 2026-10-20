@@ -417,13 +417,21 @@ strong {
 .editor.prosemirror .editor-content,
 .mce-content-body {
   background: #fff;
+  color: #191813;
 }
 
+.journal-page-header h1,
+.journal-page-header h2,
+.journal-page-header h3,
+.journal-page-header h4,
+.journal-page-header h5,
+.journal-page-header h6 {
+  color: #2c3f45;
+}
 .journal-page-header h1 {
   font-family: "CharlemagneStd", serif;
   text-align: center;
   text-transform: uppercase;
-  color: #2c3f45;
   font-size: 3rem;
   border: none;
   margin: 1em auto;
@@ -440,6 +448,35 @@ strong {
   transform: translateX(-50%);
 }
 
+.mce-content-body,
+.editor.prosemirror .editor-content,
+.journal-page-content {
+  color: #191813;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.mce-content-body .content-link,
+.editor.prosemirror .editor-content .content-link,
+.journal-page-content .content-link {
+  white-space: normal;
+}
+.mce-content-body table,
+.editor.prosemirror .editor-content table,
+.journal-page-content table {
+  color: #191813;
+  background: #fff;
+  --table-row-color-even: #f2ebe3;
+  --table-row-color-odd: transparent;
+  --table-row-color-highlight: #dce2e6;
+}
+.mce-content-body table thead,
+.editor.prosemirror .editor-content table thead,
+.journal-page-content table thead {
+  background: #191813;
+  color: #fff;
+  border-color: #191813;
+}
 .mce-content-body h1,
 .mce-content-body h2,
 .mce-content-body h3,
@@ -520,7 +557,7 @@ strong {
 .mce-content-body h4,
 .editor.prosemirror .editor-content h4,
 .journal-page-content h4 {
-  color: #8897a0;
+  color: #5a6a72;
   font-size: 1.6rem;
   margin-left: 10px;
   font-family: "CaxtonStd-Book", serif;
@@ -529,7 +566,7 @@ strong {
 .editor.prosemirror .editor-content h5,
 .journal-page-content h5 {
   font-size: 1.4rem;
-  color: #bea185;
+  color: #7a5d43;
   margin-bottom: 5px;
   margin-left: 20px;
   font-family: "CaxtonStd-LightItalic", serif;
@@ -538,7 +575,7 @@ strong {
 .editor.prosemirror .editor-content h6,
 .journal-page-content h6 {
   font-size: 1.2rem;
-  color: #8998a0;
+  color: #5a6a72;
   margin-bottom: 0px;
   margin-left: 30px;
 }
@@ -1000,7 +1037,7 @@ strong {
 .journal-page-content .aria-texte h4,
 .journal-page-content .aria-texte h5,
 .journal-page-content .aria-texte h6 {
-  color: #5a6a72;
+  color: #45565f;
 }
 .mce-content-body .aria-regle h1,
 .mce-content-body .aria-regle h2,
@@ -1339,7 +1376,7 @@ strong {
 .editor.prosemirror .editor-content .aria-texte,
 .journal-page-content .aria-texte {
   background: #dce2e6;
-  color: #5a6a72;
+  color: #45565f;
   font-style: italic;
   font-weight: normal;
 }
@@ -1416,7 +1453,7 @@ strong {
 .journal-page-content .aria-quete-combattant,
 .journal-page-content .aria-quete-ennemi,
 .journal-page-content .secret {
-  background: #959595 !important;
+  background: #626262 !important;
   color: #ffffff;
 }
 .mce-content-body .secret,
@@ -1432,7 +1469,7 @@ strong {
 .mce-content-body .secret.revealed,
 .editor.prosemirror .editor-content .secret.revealed,
 .journal-page-content .secret.revealed {
-  background: #8a9b89 !important;
+  background: #4f654e !important;
 }
 .mce-content-body .secret::before,
 .editor.prosemirror .editor-content .secret::before,

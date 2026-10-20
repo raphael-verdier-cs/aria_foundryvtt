@@ -78,6 +78,52 @@ const collection = values => Object.assign([...values], {
   get size() { return this.length; },
 });
 
+const cardCollection = values => ({
+  contents: values,
+  get(id) { return values.find(card => card.id === id); },
+  get size() { return values.length; },
+});
+
+const handAction = (action, cardId) => {
+  const row = cardId === undefined ? null : {
+    dataset: { cardId },
+    classList: {
+      toggled: null,
+      toggle(name) { this.toggled = name; },
+    },
+  };
+  const target = {
+    dataset: { action },
+    closest(selector) {
+      if (selector === "li[data-card-id]" || selector === "li.card") return row;
+      return selector === "[data-action]" ? this : null;
+    },
+  };
+  return {
+    row,
+    target,
+    event: {
+      currentTarget: { dataset: { action: "decoy" } },
+      target: { closest: selector => selector === "[data-action]" ? target : null },
+    },
+  };
+};
+
+const createHandFixture = ({ cards = [], document = {} } = {}) => {
+  const handDocument = {
+    id: "hand-1",
+    type: "hand",
+    cards: cardCollection(cards),
+    nativeActions: [],
+    drawDialog: async () => handDocument.nativeActions.push(["draw-dialog"]),
+    passDialog: async () => handDocument.nativeActions.push(["pass-dialog"]),
+    playDialog: async card => handDocument.nativeActions.push(["play-dialog", card]),
+    ...document,
+  };
+  const hand = new playerHandModule.AriaPlayerHand({ document: handDocument });
+  return { hand, document: handDocument };
+};
+
 const withDataLoaderRuntime = async callback => {
   const originals = {
     fetch: globalThis.fetch,
@@ -820,8 +866,8 @@ test("sheet defaults and actor-sheet utility callbacks preserve Foundry options"
   assert.equal(characterSheetModule.AriaCharacterSheet.defaultOptions.width, 910);
   assert.equal(lootSheetModule.AriaLootSheet.defaultOptions.height, 770);
   assert.equal(itemSheetModule.AriaItemSheet.defaultOptions.width, 600);
-  assert.equal(playerHandModule.AriaPlayerHand.defaultOptions.height, 350);
-  assert.equal(new playerHandModule.AriaPlayerHand().template, "systems/aria/templates/cards/ariaPlayerHand_evantail.hbs");
+  assert.equal(playerHandModule.AriaPlayerHand.DEFAULT_OPTIONS.position.height, 350);
+  assert.equal(playerHandModule.AriaPlayerHand.PARTS.cards.template, "systems/aria/templates/cards/ariaPlayerHand_evantail.hbs");
   assert.equal(cardMenuModule.default.defaultOptions.submitOnChange, true);
 
   const opened = [];
@@ -963,7 +1009,7 @@ test("editable actor sheet wires control actions to item and sheet operations", 
   } finally {
     globalThis.$ = originalDollar;
   }
-  assert.equal(registered.size, 16);
+  assert.equal(registered.size, 17);
   assert.equal(actorUpdates[0][1][0].system.equiped, true);
   assert.equal(actorUpdates[1][1][0].system.qty, 2);
   assert.equal(actorUpdates[2][1][0].system.qty, 0);
@@ -1586,122 +1632,314 @@ test("card menu highlights duplicated decks and surfaces current assignment mapp
   menu.onChangeDiscard(null, selectEvent("discardsByActorID"));
 });
 
-test("player hand rotates and focuses cards and handles card lifecycle controls", async () => {
-  const actions = [];
-  const drawnCard = { toMessage: message => actions.push(["draw-message", message]) };
-  const deck = { cards: new Map([["top", drawnCard]]) };
-  const discard = { id: "discard" };
-  const actor = { id: "mage", getDefaultDeck: async () => deck, getDefaultDiscard: async () => discard };
-  const card = {
-    id: "card",
+test("player hand declares the native V2 fan contract without a footer", async () => {
+  const Hand = playerHandModule.AriaPlayerHand;
+  const options = new Hand().options;
+  const source = readFileSync(new URL("../templates/cards/ariaPlayerHand_evantail.hbs", import.meta.url), "utf8");
+
+  assert.equal(Object.getPrototypeOf(Hand), foundry.applications.sheets.CardHandConfig);
+  assert.equal(globalThis.CardHand, undefined);
+  assert.deepEqual(options.position, { width: 400, height: 350 });
+  assert.equal(options.window.resizable, false);
+  assert.ok(options.classes.includes("cardsHand"));
+  for (const action of ["drawCard", "play", "discard", "pass", "focusCard"]) {
+    assert.equal(typeof options.actions[action], "function");
+  }
+  for (const action of ["draw", "controlCard", "reset", "shuffle", "toggleSort"]) {
+    assert.equal(typeof options.actions[action], "function", `${action} remains inherited from Foundry`);
+  }
+  assert.deepEqual(Object.keys(Hand.PARTS), ["cards"]);
+  assert.equal(Hand.PARTS.cards.root, true);
+  assert.deepEqual(Hand.PARTS.cards.scrollable, ["ol[data-cards]"]);
+  assert.match(source, /^\s*<div\b/);
+  assert.doesNotMatch(source, /^\s*<form\b/);
+  assert.match(source, /<ol[^>]*data-cards/);
+  assert.match(source, /data-action="focusCard"/);
+  assert.match(source, /data-card-id="\{\{card\.id\}\}"/);
+  assert.match(source, /src="\{\{card\.img\}\}"/);
+  assert.match(source, /data-action="play"/);
+  assert.match(source, /data-action="discard"/);
+
+  const { hand, document } = createHandFixture();
+  await hand.submit({ operation: { render: false } });
+  assert.equal(options.tag, "form");
+  assert.deepEqual(hand.submissions, [{ operation: { render: false } }]);
+  const context = await hand._preparePartContext("cards", { document }, {});
+  assert.equal(context.document, document);
+  assert.deepEqual(context.cards, []);
+  assert.deepEqual(context.cardTypes, {});
+  assert.ok(context.sortModeIcon);
+
+  const area = { children: [{ style: {} }, { style: {} }], style: {} };
+  hand.element = { querySelectorAll: selector => selector === ".cards" ? [area] : [] };
+  await hand._onRender({}, { parts: ["cards"] });
+  assert.equal(hand.applicationRenderCalls.length, 1);
+  assert.equal(hand.nativeRenderCalls.length, 1);
+  assert.equal(hand.nativeDragDropSelector, "ol[data-cards] > li");
+  assert.equal(area.children[1].style.transform, "translateX(60px)");
+  assert.equal(area.style.transform, "translateX(93px)");
+
+  await hand.dispatchAction(handAction("draw").event);
+  assert.deepEqual(document.nativeActions, [["draw-dialog"]]);
+});
+
+test("player hand routes delegated pass actions using the clicked card ID", async () => {
+  const card = { id: "hand-card-1" };
+  const { hand, document } = createHandFixture({ cards: [card] });
+  const action = handAction("pass", card.id);
+
+  await hand.dispatchAction(action.event);
+
+  assert.deepEqual(document.nativeActions, [["play-dialog", card]]);
+  assert.deepEqual(hand.submissions, [{ operation: { render: false } }]);
+});
+
+test("player hand keeps header pass as the whole-hand dialog", async () => {
+  const { hand, document } = createHandFixture();
+  const action = handAction("pass");
+
+  await hand.dispatchAction(action.event);
+
+  assert.deepEqual(document.nativeActions, [["pass-dialog"]]);
+});
+
+test("player hand focuses cards and preserves native lifecycle rendering", async () => {
+  const focusedCard = { classList: { toggled: null, toggle(name) { this.toggled = name; } } };
+  const { hand } = createHandFixture();
+  const action = handAction("focusCard", "hand-card-1");
+  action.row.classList = focusedCard.classList;
+  await hand.dispatchAction(action.event);
+  assert.equal(focusedCard.classList.toggled, "focusedCard");
+  await hand.dispatchAction(handAction("focusCard").event);
+
+  const calls = [];
+  hand.render = force => calls.push(["render", force]);
+  hand.close = () => calls.push(["close"]);
+  hand.maximize = () => calls.push(["maximize"]);
+  await hand.toggleRender();
+  hand.rendered = true;
+  hand.minimized = true;
+  await hand.toggleRender();
+  hand.minimized = false;
+  await hand.toggleRender();
+  assert.deepEqual(calls, [["render", true], ["maximize"], ["close"]]);
+
+  const unrenderedHand = createHandFixture().hand;
+  unrenderedHand.rotateCards();
+  unrenderedHand.element = {};
+  unrenderedHand.rotateCards();
+  unrenderedHand.element = { querySelectorAll: () => undefined };
+  unrenderedHand.rotateCards();
+  unrenderedHand.element = { querySelectorAll: () => [] };
+  unrenderedHand.rotateCards();
+  const emptyCardArea = { children: [], style: {} };
+  unrenderedHand.element = { querySelectorAll: () => [emptyCardArea] };
+  unrenderedHand.rotateCards();
+  assert.equal(emptyCardArea.style.transform, "translateX(153px)");
+});
+
+test("player hand draws only after a successful transfer and posts one Aria message", async () => {
+  const events = [];
+  const transferredCard = {
+    id: "new-hand-card-id",
+    toMessage: async message => events.push(["message", message]),
+  };
+  const deck = { type: "deck", cards: cardCollection([{ id: "deck-card-id" }]) };
+  const actor = { id: "mage", getDefaultDeck: async () => deck };
+  const { hand, document } = createHandFixture({
+    document: {
+      draw: async (source, number, options) => {
+        events.push(["draw", source, number, options]);
+        return [transferredCard];
+      },
+    },
+  });
+  runtime.settings.set("aria.deckSetting", { actorsByHandsID: { "hand-1": "mage" } });
+  game.actors = collection([actor]);
+
+  await hand.dispatchAction(handAction("drawCard").event);
+
+  assert.deepEqual(events.map(([type]) => type), ["draw", "message"]);
+  assert.equal(events[0][1], deck);
+  assert.equal(events[0][2], 1);
+  assert.deepEqual(events[0][3], { updateData: { face: 1 }, chatNotification: false });
+  assert.equal(events[1][1].author, game.user.id);
+  assert.deepEqual(hand.submissions, [{ operation: { render: false } }]);
+  assert.deepEqual(document.nativeActions, []);
+});
+
+test("player hand omits the success message for empty, canceled, and failed draws", async () => {
+  const events = [];
+  const deck = { type: "deck", cards: cardCollection([{ id: "deck-card-id" }]) };
+  const actor = { id: "mage", getDefaultDeck: async () => deck };
+  const { hand, document } = createHandFixture({
+    document: {
+      draw: async () => {
+        events.push(["draw"]);
+        return [];
+      },
+    },
+  });
+  runtime.settings.set("aria.deckSetting", { actorsByHandsID: { "hand-1": "mage" } });
+  game.actors = collection([actor]);
+  await hand.dispatchAction(handAction("drawCard").event);
+  assert.deepEqual(events, [["draw"]]);
+
+  deck.cards = cardCollection([]);
+  await hand.dispatchAction(handAction("drawCard").event);
+  assert.deepEqual(events, [["draw"]]);
+  deck.cards = cardCollection([{ id: "deck-card-id" }]);
+
+  document.draw = async () => {
+    events.push(["canceled"]);
+    return null;
+  };
+  await hand.dispatchAction(handAction("drawCard").event);
+  document.draw = async () => {
+    events.push(["failed"]);
+    throw new Error("draw failed");
+  };
+  await assert.rejects(hand.dispatchAction(handAction("drawCard").event), /draw failed/);
+  assert.deepEqual(events, [["draw"], ["canceled"], ["failed"]]);
+});
+
+test("player hand play and discard send one message after a successful card transfer", async () => {
+  const events = [];
+  const discard = { type: "pile", id: "discard-1", cards: cardCollection([]) };
+  const actor = {
+    id: "mage",
+    getDefaultDiscard: async () => discard,
+  };
+  const movedCard = {
+    id: "new-discard-card-id",
     name: "Arcane",
     img: "arcane.png",
     description: "A spell",
-    face: null,
-    pass: async target => actions.push(["pass", target]),
-    toMessage: message => actions.push(["card-message", message]),
-    update: async data => actions.push(["update-card", data]),
-    sheet: { render: () => actions.push(["edit"]) },
-    deleteDialog: () => actions.push(["delete"]),
+    toMessage: async message => events.push(["message", message]),
   };
-  const object = {
-    id: "hand",
-    pack: "pack",
-    cards: new Map([["card", card]]),
-    draw: (...args) => actions.push(["draw", ...args]),
-    dealDialog: () => actions.push(["deal"]),
-    drawDialog: () => actions.push(["draw-dialog"]),
-    passDialog: () => actions.push(["pass-dialog"]),
-    recall: () => actions.push(["recall"]),
-    shuffle: () => actions.push(["shuffle"]),
+  const sourceCard = {
+    id: "hand-card-id",
+    name: "Arcane",
+    img: "arcane.png",
+    description: "A spell",
+    pass: async (destination, options) => {
+      events.push(["pass", destination, options]);
+      return movedCard;
+    },
   };
-  runtime.settings.set("aria.deckSetting", { actorsByHandsID: { hand: "mage" } });
+  const { hand } = createHandFixture({ cards: [sourceCard] });
+  runtime.settings.set("aria.deckSetting", { actorsByHandsID: { "hand-1": "mage" } });
   game.actors = collection([actor]);
-  const hand = Object.assign(new playerHandModule.AriaPlayerHand(), {
-    object,
-    _onSubmit: async () => actions.push(["submit"]),
-    render: () => actions.push(["render"]),
-  });
-  const button = action => ({ dataset: { action }, closest: () => ({ dataset: { cardId: "card" } }) });
-  const run = action => hand._onCardControl({ currentTarget: button(action) });
-  const area = { children: [{ style: {} }, { style: {} }], style: {} };
-  hand.rotateCards({ find: () => [area] });
-  assert.equal(area.children[1].style.transform, "translateX(60px)");
-  assert.equal(area.style.transform, "translateX(93px)");
-  const cardElement = { classList: { toggled: null, toggle(name) { this.toggled = name; } } };
-  hand.focusCard({ currentTarget: { closest: () => cardElement } });
-  assert.equal(cardElement.classList.toggled, "focusedCard");
-  let clickHandler;
-  let baseActivationCount = 0;
-  const originalActivateListeners = CardHand.prototype.activateListeners;
-  CardHand.prototype.activateListeners = () => { baseActivationCount++; };
+
+  await hand.dispatchAction(handAction("play", sourceCard.id).event);
+  await hand.dispatchAction(handAction("discard", sourceCard.id).event);
+
+  assert.deepEqual(events.map(([type]) => type), ["pass", "message", "pass", "message"]);
+  assert.deepEqual(events[0], ["pass", discard, { chatNotification: false, action: "play" }]);
+  assert.deepEqual(events[2], ["pass", discard, { chatNotification: false, action: "discard" }]);
+  assert.equal(events[1][1].content.includes("Joue Arcane"), true);
+  assert.equal(events[3][1].content.includes("Jette Arcane"), true);
+  assert.equal(events[1][1].author, game.user.id);
+  assert.equal(hand.submissions.length, 2);
+
+  sourceCard.pass = async () => undefined;
+  await hand.dispatchAction(handAction("play", sourceCard.id).event);
+  assert.equal(events.length, 4);
+  sourceCard.pass = async () => {
+    throw new Error("transfer failed");
+  };
+  await assert.rejects(hand.dispatchAction(handAction("play", sourceCard.id).event), /transfer failed/);
+  assert.equal(events.length, 4);
+});
+
+test("player hand reports missing associations and stale card IDs without TypeErrors", async () => {
+  const notifications = [];
+  const originalWarn = ui.notifications.warn;
+  ui.notifications.warn = message => notifications.push(message);
   try {
-    await hand.activateListeners({
-      find: selector => {
-        if (selector === ".cards") return [];
-        return {
-          click: handler => {
-            assert.equal(selector, ".card img");
-            clickHandler = handler;
-          },
-        };
-      },
-    });
+    const { hand: missingActorHand } = createHandFixture({ cards: [{ id: "card" }] });
+    runtime.settings.set("aria.deckSetting", undefined);
+    game.actors = collection([]);
+    await missingActorHand.dispatchAction(handAction("drawCard").event);
+    runtime.settings.set("aria.deckSetting", {});
+    await missingActorHand.dispatchAction(handAction("drawCard").event);
+    runtime.settings.set("aria.deckSetting", { actorsByHandsID: {} });
+    await missingActorHand.dispatchAction(handAction("discard", "card").event);
+    await missingActorHand.dispatchAction(handAction("play").event);
+
+    runtime.settings.set("aria.deckSetting", { actorsByHandsID: { "hand-1": "stale-actor" } });
+    await missingActorHand.dispatchAction(handAction("drawCard").event);
+
+    const actorWithoutDeck = { id: "mage" };
+    runtime.settings.set("aria.deckSetting", { actorsByHandsID: { "hand-1": "mage" } });
+    game.actors = collection([actorWithoutDeck]);
+    const { hand: missingDeckMethodHand } = createHandFixture();
+    await missingDeckMethodHand.dispatchAction(handAction("drawCard").event);
+
+    const actor = { id: "mage", getDefaultDeck: async () => false, getDefaultDiscard: async () => false };
+    game.actors = collection([actor]);
+    const { hand: missingDeckHand } = createHandFixture();
+    await missingDeckHand.dispatchAction(handAction("drawCard").event);
+    const malformedDeckActor = { id: "mage", getDefaultDeck: async () => ({ cards: { contents: [] } }) };
+    game.actors = collection([malformedDeckActor]);
+    const { hand: malformedDeckHand } = createHandFixture();
+    await malformedDeckHand.dispatchAction(handAction("drawCard").event);
+    const incompleteDeckActor = {
+      id: "mage",
+      getDefaultDeck: async () => ({ cards: { get: () => undefined, contents: undefined } }),
+    };
+    game.actors = collection([incompleteDeckActor]);
+    const { hand: incompleteDeckHand } = createHandFixture();
+    await incompleteDeckHand.dispatchAction(handAction("drawCard").event);
+    const { hand: missingDiscardHand } = createHandFixture({ cards: [{ id: "card" }] });
+    await missingDiscardHand.dispatchAction(handAction("play", "card").event);
+
+    const actorWithoutDiscard = { id: "mage", getDefaultDeck: async () => ({ cards: cardCollection([]) }) };
+    game.actors = collection([actorWithoutDiscard]);
+    const { hand: missingDiscardMethodHand } = createHandFixture({ cards: [{ id: "card" }] });
+    await missingDiscardMethodHand.dispatchAction(handAction("discard", "card").event);
+    const malformedDiscardActor = {
+      id: "mage",
+      getDefaultDiscard: async () => ({ cards: { contents: [] } }),
+    };
+    game.actors = collection([malformedDiscardActor]);
+    const { hand: malformedDiscardHand } = createHandFixture({ cards: [{ id: "card" }] });
+    await malformedDiscardHand.dispatchAction(handAction("discard", "card").event);
+
+    const { hand: staleCardHand } = createHandFixture();
+    await staleCardHand.dispatchAction(handAction("pass", "missing-card").event);
+    const { hand: staleTransferHand } = createHandFixture();
+    await staleTransferHand.dispatchAction(handAction("discard", "missing-card").event);
+
+    assert.deepEqual(notifications, [
+      "ARIA.cards.hand.actorMissing",
+      "ARIA.cards.hand.actorMissing",
+      "ARIA.cards.hand.actorMissing",
+      "ARIA.cards.hand.cardMissing",
+      "ARIA.cards.hand.actorMissing",
+      "ARIA.cards.hand.deckMissing",
+      "ARIA.cards.hand.deckMissing",
+      "ARIA.cards.hand.deckMissing",
+      "ARIA.cards.hand.deckMissing",
+      "ARIA.cards.hand.discardMissing",
+      "ARIA.cards.hand.discardMissing",
+      "ARIA.cards.hand.discardMissing",
+      "ARIA.cards.hand.cardMissing",
+      "ARIA.cards.hand.cardMissing",
+    ]);
+    assert.equal(missingActorHand.submissions.length, 5);
+    assert.equal(missingDeckHand.submissions.length, 1);
+    assert.equal(missingDiscardHand.submissions.length, 1);
+    assert.equal(missingDeckMethodHand.submissions.length, 1);
+    assert.equal(missingDiscardMethodHand.submissions.length, 1);
+    assert.equal(malformedDeckHand.submissions.length, 1);
+    assert.equal(incompleteDeckHand.submissions.length, 1);
+    assert.equal(malformedDiscardHand.submissions.length, 1);
+    assert.equal(staleCardHand.submissions.length, 1);
+    assert.equal(staleTransferHand.submissions.length, 1);
   } finally {
-    CardHand.prototype.activateListeners = originalActivateListeners;
+    ui.notifications.warn = originalWarn;
   }
-  assert.equal(baseActivationCount, 1);
-  clickHandler({ currentTarget: { closest: () => cardElement } });
-  assert.equal(cardElement.classList.toggled, "focusedCard");
-  await run("play");
-  assert.ok(actions.some(([name, target]) => name === "pass" && target === discard));
-  assert.equal(actions.find(([name]) => name === "card-message")[1].author, game.user.id);
-  await run("discard");
-  await run("view");
-  await run("display");
-  await run("drawCard");
-  await run("pass");
-  assert.equal(actions.filter(([name]) => name === "pass-dialog").length, 1);
-  await hand._onCardControl({
-    currentTarget: { dataset: { action: "pass" }, closest: () => null },
-  });
-  assert.equal(actions.filter(([name]) => name === "pass-dialog").length, 2);
-  assert.equal(await hand._onCardControl({
-    currentTarget: { dataset: { action: "unrecognized" }, closest: () => null },
-  }), undefined);
-  await run("create");
-  await run("edit");
-  await run("delete");
-  await run("deal");
-  assert.equal(actions.filter(([name]) => name === "deal").length, 1);
-  await run("draw");
-  await run("reset");
-  await run("shuffle");
-  await run("toggleSort");
-  await run("nextFace");
-  assert.deepEqual(actions.find(([name]) => name === "update-card")[1], { face: 0 });
-  card.face = 0;
-  await run("prevFace");
-  assert.deepEqual(actions.filter(([name]) => name === "update-card").at(-1)[1], { face: null });
-  card.face = 3;
-  await run("nextFace");
-  assert.deepEqual(actions.filter(([name]) => name === "update-card").at(-1)[1], { face: 4 });
-  await run("prevFace");
-  assert.deepEqual(actions.filter(([name]) => name === "update-card").at(-1)[1], { face: 2 });
-  assert.equal(hand._sortStandard, true);
-  const priorActionCount = actions.length;
-  await hand.toggleRender();
-  assert.equal(actions.length, priorActionCount + 1);
-  assert.deepEqual(actions.at(-1), ["render"]);
-  hand.rendered = true;
-  hand._minimized = true;
-  hand.maximize = () => actions.push(["maximize"]);
-  await hand.toggleRender();
-  hand._minimized = false;
-  hand.close = () => actions.push(["close"]);
-  await hand.toggleRender();
-  assert.ok(actions.some(([name]) => name === "maximize"));
-  assert.ok(actions.some(([name]) => name === "close"));
 });
 
 test("legacy item preparation and card document hooks handle alternate document types", () => {
@@ -1733,7 +1971,7 @@ test("legacy item preparation and card document hooks handle alternate document 
     console.error = originalError;
   }
   assert.equal(logged.length, 2);
-  assert.equal(new cardsModule.AriaCards()._postChatNotification(), undefined);
+  assert.equal(Object.hasOwn(cardsModule.AriaCards.prototype, "_postChatNotification"), false);
 });
 
 test("item controllers prevent duplicate identities and confirm removal", async () => {
@@ -2248,10 +2486,10 @@ test("actor and item sheets choose the current engine dynamically", async () => 
   assert.match(actorTemplate, /engine=editorEngine/);
 });
 
-test("manifest keeps the last runtime-verified Foundry minimum", () => {
+test("manifest preserves the minimum and declares the tested current Foundry version", () => {
   const manifest = JSON.parse(readFileSync(new URL("../system.json", import.meta.url), "utf8"));
   assert.equal(manifest.compatibility.minimum, "13.345");
-  assert.equal(manifest.compatibility.verified, "13.345");
+  assert.equal(manifest.compatibility.verified, "14.369");
   assert.ok(manifest.esmodules.includes("module/aria.js"));
   assert.ok(manifest.styles.includes("css/aria.css"));
   for (const path of [...manifest.esmodules, ...manifest.styles, ...manifest.packs.map(pack => pack.path), manifest.license]) {

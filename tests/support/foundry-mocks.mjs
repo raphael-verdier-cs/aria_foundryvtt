@@ -47,8 +47,151 @@ export function installFoundryMocks() {
   }
 
   class FoundryForm extends FoundrySheet {}
-  class FoundryCardHand extends FoundrySheet {
-    async activateListeners() {}
+  const mergeApplicationOptions = (target, source) => {
+    for (const [key, value] of Object.entries(source ?? {})) {
+      if (Array.isArray(value)) {
+        target[key] = [...(target[key] ?? []), ...value];
+      } else if (value && Object.getPrototypeOf(value) === Object.prototype) {
+        target[key] ??= {};
+        mergeApplicationOptions(target[key], value);
+      } else {
+        target[key] = value;
+      }
+    }
+    return target;
+  };
+  const applicationOptionsFor = (applicationClass, options) => {
+    const defaults = [];
+    for (let current = applicationClass; current && current !== Function.prototype; current = Object.getPrototypeOf(current)) {
+      if (Object.hasOwn(current, "DEFAULT_OPTIONS")) defaults.unshift(current.DEFAULT_OPTIONS);
+    }
+    defaults.push(options);
+    return defaults.reduce(mergeApplicationOptions, {});
+  };
+
+  class FoundryApplicationV2 {
+    static DEFAULT_OPTIONS = {
+      actions: {},
+      classes: [],
+      position: {},
+      window: { resizable: false },
+      form: { closeOnSubmit: false, submitOnChange: false },
+    };
+
+    constructor(options = {}) {
+      this.options = applicationOptionsFor(this.constructor, options);
+      this.document = options.document ?? this.options.document;
+      this.form = this.options.tag === "form" ? { hasAttribute: () => false } : null;
+      this.element = options.element;
+      this.rendered = false;
+      this.minimized = false;
+    }
+
+    async submit(options = {}) {
+      this.form.hasAttribute("data-action");
+      this.submissions ??= [];
+      this.submissions.push(options);
+    }
+
+    async dispatchAction(event) {
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+      const handler = this.options.actions[target.dataset.action];
+      if (!handler) return this._onClickAction(event, target);
+      return handler.call(this, event, target);
+    }
+
+    _onClickAction() {}
+    async _onRender(context, options) {
+      this.applicationRenderCalls ??= [];
+      this.applicationRenderCalls.push([context, options]);
+    }
+
+    render(force) {
+      this.rendered = Boolean(force);
+      this.renderCalls ??= [];
+      this.renderCalls.push(force);
+      return this;
+    }
+
+    close() {
+      this.rendered = false;
+      return this;
+    }
+
+    maximize() {
+      this.minimized = false;
+      return this;
+    }
+  }
+
+  class FoundryDocumentSheetV2 extends FoundryApplicationV2 {
+    static DEFAULT_OPTIONS = {
+      classes: ["sheet"],
+      document: null,
+      form: { handler: true },
+      tag: "form",
+    };
+
+    async _prepareContext() {
+      return { document: this.document, editable: true };
+    }
+  }
+
+  class FoundryCardsConfig extends FoundryDocumentSheetV2 {
+    static DEFAULT_OPTIONS = {
+      actions: {
+        controlCard: function () {
+          return this.document.nativeActions.push(["controlCard"]);
+        },
+        pass: function () {
+          return this.document.passDialog();
+        },
+        reset: function () {
+          return this.document.nativeActions.push(["reset"]);
+        },
+        shuffle: function () {
+          return this.document.nativeActions.push(["shuffle"]);
+        },
+        toggleSort: function () {
+          return this.document.nativeActions.push(["toggleSort"]);
+        },
+      },
+      classes: ["cards-config"],
+      position: { width: 720 },
+    };
+
+    async _preparePartContext(partId, context) {
+      const partContext = { ...context };
+      if (partId === "cards") {
+        partContext.cards = this.document.cards.contents;
+        partContext.cardTypes = {};
+        partContext.sortModeIcon = "fa-random";
+      }
+      return partContext;
+    }
+
+    async _onRender(context, options) {
+      await super._onRender(context, options);
+      this.nativeRenderCalls ??= [];
+      this.nativeRenderCalls.push(["cards-config", options]);
+      this.nativeDragDropSelector = "ol[data-cards] > li";
+    }
+  }
+
+  class FoundryCardHandConfig extends FoundryCardsConfig {
+    static DEFAULT_OPTIONS = {
+      actions: {
+        draw: function () {
+          return this.document.drawDialog();
+        },
+      },
+    };
+
+    static PARTS = {
+      cards: { root: true, scrollable: ["ol[data-cards]"], template: "native-hand.hbs" },
+      footer: { template: "native-footer.hbs" },
+    };
   }
   class FoundryCards extends FoundryDocument {}
   class FoundryTokenDocument {
@@ -62,11 +205,13 @@ export function installFoundryMocks() {
   globalThis.ActorSheet = FoundrySheet;
   globalThis.ItemSheet = FoundrySheet;
   globalThis.FormApplication = FoundryForm;
-  globalThis.CardHand = FoundryCardHand;
   globalThis.Cards = FoundryCards;
   globalThis.TokenDocument = FoundryTokenDocument;
 
   globalThis.foundry = {
+    applications: {
+      sheets: { CardHandConfig: FoundryCardHandConfig },
+    },
     utils: {
       duplicate: value => structuredClone(value),
       mergeObject: (target, source) => Object.assign(target, source),
@@ -134,7 +279,13 @@ export function installFoundryMocks() {
     });
   }
   globalThis.game.charactersMagic = [];
-  globalThis.ui = { notifications: { error: message => mockCalls.push(["notification", message]) }, players: { render: () => {} } };
+  globalThis.ui = {
+    notifications: {
+      error: message => mockCalls.push(["notification", message]),
+      warn: message => mockCalls.push(["warning", message]),
+    },
+    players: { render: () => {} },
+  };
   globalThis.Hooks = {
     once: (name, callback) => hooks.once.set(name, callback),
     on: (name, callback) => hooks.on.set(name, callback),

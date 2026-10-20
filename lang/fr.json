@@ -1,5 +1,9 @@
 {
   "ARIA.title": "Aria",
+  "ARIA.cards.hand.actorMissing": "Aucun personnage n'est associé à cette main.",
+  "ARIA.cards.hand.deckMissing": "Aucun deck valide n'est associé au personnage de cette main.",
+  "ARIA.cards.hand.discardMissing": "Aucune défausse valide n'est associée au personnage de cette main.",
+  "ARIA.cards.hand.cardMissing": "Cette carte n'est plus présente dans la main.",
 
   "ARIA.ui.na": "N.C.",
   "ARIA.ui.cancel": "Annuler",
@@ -111,6 +115,18 @@
   "ARIA.details.languages": "Langues",
   "ARIA.details.biography": "Biographie",
   "ARIA.details.description": "Description",
+  "ARIA.specialAbilityRoll.title": "Compétences spéciales — jets de référence",
+  "ARIA.specialAbilityRoll.rawLabel": "Jet brut",
+  "ARIA.specialAbilityRoll.guidance": "Ces boutons effectuent des jets bruts privés. Les pourcentages et scores ne sont que des références ; évaluez manuellement conditions, réussite et effets.",
+  "ARIA.specialAbilityRoll.threshold": "Référence",
+  "ARIA.specialAbilityRoll.flavor.raw": "Jet brut privé : {label} ({formula}). Interprétation manuelle.",
+  "ARIA.specialAbilityRoll.flavor.reference": "Jet privé de référence : {label} ({formula} ; référence {threshold} %). Interprétation manuelle.",
+  "ARIA.specialAbilityRoll.notice.noSection": "Aucune section « Compétences spéciales » n'a été trouvée dans la description actuelle.",
+  "ARIA.specialAbilityRoll.notice.manual": "Certaines expressions ne sont pas reconnues comme jets littéraux sûrs et restent du texte modifiable.",
+  "ARIA.specialAbilityRoll.notice.target": "Un jet de compétence exige une compétence non ambiguë du personnage ; les jets ciblés ou opposés restent du texte.",
+  "ARIA.specialAbilityRoll.notice.permission": "Vous ne pouvez pas lancer de jet depuis cette fiche.",
+  "ARIA.specialAbilityRoll.notice.stale": "Ce bouton de jet n'est plus à jour. Actualisez la fiche puis réessayez.",
+  "ARIA.specialAbilityRoll.notice.failure": "Le jet privé a échoué : {reason}",
 
   "ARIA.stats.label": "Caractéristiques",
   "ARIA.stats.abbrev": "CARAC.",

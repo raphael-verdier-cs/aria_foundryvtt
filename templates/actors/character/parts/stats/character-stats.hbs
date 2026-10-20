@@ -41,3 +41,23 @@
         {{editor biographyHTML target="system.description" button=true owner=owner editable=editable engine=editorEngine}}
     </div>
 </div>
+
+{{#if specialAbilityRolls.hasPanelContent}}
+<section class="special-ability-roll-panel" aria-label="{{localize 'ARIA.specialAbilityRoll.title'}}">
+    <h3>{{localize "ARIA.specialAbilityRoll.title"}}</h3>
+    <p>{{localize "ARIA.specialAbilityRoll.guidance"}}</p>
+    {{#each specialAbilityRolls.actions}}
+    <div class="form-group">
+        <button type="button" class="special-ability-roll" data-roll-id="{{id}}" {{#unless ../specialAbilityRolls.editable}}disabled{{/unless}}>
+            {{label}} — {{formula}}
+        </button>
+        {{#if hasThreshold}}
+        <span>{{localize "ARIA.specialAbilityRoll.threshold"}}: {{threshold}}%</span>
+        {{/if}}
+    </div>
+    {{/each}}
+    {{#each specialAbilityRolls.notices}}
+    <p class="notes">{{localize this}}</p>
+    {{/each}}
+</section>
+{{/if}}

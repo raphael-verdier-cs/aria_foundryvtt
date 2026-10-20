@@ -9,6 +9,7 @@ import {AriaRoll} from "../controllers/roll.js";
 import {Traversal} from "../utils/traversal.js";
 import { AriaItem } from "../items/item.js";
 import { getEditorEngine } from "../editor.js";
+import { executeSpecialAbilityRoll, getSpecialAbilityRolls } from "./special-ability-rolls.js";
 
 
 export class AriaActorSheet extends ActorSheet {
@@ -50,6 +51,8 @@ export class AriaActorSheet extends ActorSheet {
             ev.preventDefault();
             return this._onRoll(ev,false);
         });
+
+        html.find('.special-ability-roll').click(ev => this._onSpecialAbilityRoll(ev));
 
         // Initiate a roll
         html.find('.rollable').contextmenu(ev => {
@@ -134,6 +137,27 @@ export class AriaActorSheet extends ActorSheet {
         html.find('.carte_magie').click(this.onOpenMagicCards.bind(this));
     }
 
+    async _onSpecialAbilityRoll(event) {
+        event.preventDefault();
+        const editable = Boolean(this.actor.isOwner && this.isEditable);
+        if (!editable) {
+            return executeSpecialAbilityRoll({
+                actor: this.actor,
+                actionId: event.currentTarget?.dataset?.rollId,
+                definitions: [],
+                editable: false
+            });
+        }
+        const currentDescription = this.actor.system?.description ?? "";
+        const definitions = getSpecialAbilityRolls(currentDescription, this.actor.items).actions;
+        return executeSpecialAbilityRoll({
+            actor: this.actor,
+            actionId: event.currentTarget?.dataset?.rollId,
+            definitions,
+            editable
+        });
+    }
+
 /** @override */
 async getData(options) {
 
@@ -172,6 +196,18 @@ async getData(options) {
         relativeTo: this.actor
       });
 
+    const canDisplaySpecialAbilityRolls = Boolean(this.actor.isOwner && this.isEditable);
+    data.specialAbilityRolls = canDisplaySpecialAbilityRolls
+      ? {
+          ...getSpecialAbilityRolls(this.actor.system?.description ?? "", this.actor.items),
+          editable: true,
+        }
+      : {
+          actions: [],
+          notices: [],
+          hasPanelContent: false,
+          editable: false,
+        };
 
     // Return data to the sheet
     return data

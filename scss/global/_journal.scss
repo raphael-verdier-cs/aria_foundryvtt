@@ -1,4 +1,5 @@
 @use "../utils/typography";
+@use "../utils/colors";
 
 /* ----------------------------------------- */
 /*  JOURNAL                                  */
@@ -8,14 +9,23 @@
 .editor.prosemirror .editor-content,
 .mce-content-body {
 	background: #fff;
+	color: colors.$colorDark;
 }
 
 .journal-page-header{
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		color: #2c3f45;
+	}
+
 	h1{
 	font-family: typography.$font-secondary;
 	text-align: center;
 	text-transform: uppercase;
-	color: #2c3f45;
 	font-size: 3rem;
 	border:none;
 	margin: 1em auto;
@@ -37,6 +47,28 @@
 .mce-content-body,
 .editor.prosemirror .editor-content,
 .journal-page-content{
+	color: colors.$colorDark;
+	font-size: 16px;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+
+	.content-link {
+		white-space: normal;
+	}
+
+	table {
+		color: colors.$colorDark;
+		background: #fff;
+		--table-row-color-even: #f2ebe3;
+		--table-row-color-odd: transparent;
+		--table-row-color-highlight: #dce2e6;
+
+		thead {
+			background: colors.$colorDark;
+			color: #fff;
+			border-color: colors.$colorDark;
+		}
+	}
 
 	h1,
 	h2,
@@ -98,7 +130,7 @@
 	}
 
 	h4 {
-		color: #8897a0;
+		color: #5a6a72;
 		font-size: 1.6rem;
 		margin-left: 10px;
 		font-family: typography.$font-h3-journal;
@@ -107,7 +139,7 @@
 
 	h5 {
 		font-size: 1.4rem;
-		color: #bea185;
+		color: #7a5d43;
 		margin-bottom: 5px;
 		margin-left: 20px;
 		font-family: typography.$font-h4-journal;
@@ -115,7 +147,7 @@
 
 	h6 {
 		font-size: 1.2rem;
-		color: #8998a0;
+		color: #5a6a72;
 		margin-bottom: 0px;
 		margin-left: 30px;
 	}
@@ -169,7 +201,7 @@
 		h4,
 		h5,
 		h6 {
-		color: #5a6a72;
+		color: #45565f;
 		}
 	}
 
@@ -236,7 +268,7 @@
 
 	.aria-texte {
 		background: #dce2e6;
-		color: #5a6a72;
+		color: #45565f;
 		font-style: italic;
 		font-weight: normal;
 	}
@@ -278,7 +310,7 @@
 	.aria-quete-combattant,
 	.aria-quete-ennemi,
 	.secret {
-		background: #959595 !important;
+		background: #626262 !important;
 		color: #ffffff;
 	}
 
@@ -293,7 +325,7 @@
 	}
 
 	.secret.revealed {
-		background: #8a9b89  !important;
+		background: #4f654e  !important;
 	}
 	.secret::before{
 		background-image: url("../ui/icons/pins/MJ.png");

@@ -7,16 +7,32 @@ La version stable la plus recente consultee le 18 octobre 2026 est
 Consulter aussi le [catalogue des versions](https://foundryvtt.com/releases/).
 
 Les tests automatises du systeme ne remplacent pas une verification dans
-Foundry. Aucun serveur Foundry sous licence n'etait disponible pour cette
-mise a jour : la verification en conditions reelles reste a effectuer.
-Le minimum et la derniere version verifiee dans le manifeste restent donc
-13.345 : cette modification cible Foundry 14.369 sans annoncer une verification
-en conditions reelles qui n'a pas eu lieu.
+Foundry. L'interface de main a ete verifiee dans Foundry 14.369 : rendu en
+eventail, focus, pioche, jeu, defausse, dialogues de transfert et notifications
+uniques apres succes. Les actions annulees ou echouees ne publient pas de
+message de succes. Le glisser-deposer complet entre fenetres et la certification
+sur Foundry 13.345 restent a effectuer. Le minimum declare dans le manifeste
+reste 13.345 ; la documentation API de cette branche ne certifie pas a elle
+seule la version exacte 13.345.
+
+Apres les essais dans une instance sous licence, le manifeste declare
+`verified: 14.369` sans relever le minimum `13.345`. Les fiches et les nouveaux
+jets de reference ont aussi ete controles dans cette instance ; cela ne
+remplace pas les essais de votre monde ni ceux des modules optionnels.
 
 ## Remplacements et comportement conserve
 
 - Les messages de jet utilisent `author` et `rolls` au lieu des champs retires
   `user` et `CONST.CHAT_MESSAGE_STYLES.ROLL`.
+- Le transfert depuis une carte utilise `Cards.playDialog(carte)` pour garder
+  la carte selectionnee ; le transfert depuis l'en-tete conserve
+  `Cards.passDialog()` pour toute la main.
+- La main des joueurs utilise `foundry.applications.sheets.CardHandConfig`
+  avec le template Aria en eventail et la liste native `ol[data-cards]` pour
+  conserver les identifiants des cartes incorporees et le glisser-deposer.
+  Ses actions Aria de pioche, jeu et defausse suppriment la notification native
+  uniquement lorsqu'elles publient deja leur propre message ; les dialogues
+  natifs conservent leur notification.
 - Les compendiums utilisent les API de documents actuelles et la configuration
   explicite de leur verrouillage. Les erreurs d'import sont signalees et les
   donnees sources sont controlees avant toute suppression.
@@ -53,6 +69,11 @@ ancienne version de Foundry.
   leurs champs, descriptions enrichies et images.
 - Ouvrir une fiche existante et verifier caracteristiques, competences,
   inventaire, protections, points de vie et monnaie.
+- Dans une fiche de personnage, modifier puis sauvegarder une description avec
+  une section **Compétences spéciales** ; verifier que les contrôles de jet
+  restent séparés de l'editeur, ne changent ni la description ni les Items, et
+  que leurs jets privés n'interprètent pas automatiquement seuils, conditions
+  ou effets.
 - Glisser les objets et competences des compendiums vers une fiche ; verifier
   l'edition, la suppression et les valeurs conservees apres rechargement.
 - Effectuer les jets de caracteristique, competence, attaque et degats ;
@@ -76,6 +97,7 @@ ancienne version de Foundry.
 - [API Foundry 14](https://foundryvtt.com/api/v14/)
 - [Insertions ProseMirror prises en charge](https://foundryvtt.com/api/v14/variables/CONFIG.TextEditor.html)
 
-Les anciennes fiches ApplicationV1 ne sont pas remplacees uniquement pour
-adopter ApplicationV2 : une telle reecriture n'est pas necessaire a la
-compatibilite de base et changerait sensiblement l'interface.
+Les autres fiches ApplicationV1 ne sont pas remplacees uniquement pour adopter
+ApplicationV2 : une telle reecriture n'est pas necessaire a la compatibilite
+de base et changerait sensiblement leur interface. La main est l'exception
+ciblee, car le rendu natif V2 avait remplace son interface en eventail.

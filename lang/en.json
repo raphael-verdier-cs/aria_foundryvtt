@@ -1,5 +1,9 @@
 {
   "ARIA.title": "Aria",
+  "ARIA.cards.hand.actorMissing": "No character is associated with this hand.",
+  "ARIA.cards.hand.deckMissing": "No valid deck is associated with this hand's character.",
+  "ARIA.cards.hand.discardMissing": "No valid discard pile is associated with this hand's character.",
+  "ARIA.cards.hand.cardMissing": "This card is no longer present in the hand.",
 
   "ARIA.ui.na": "N.A.",
   "ARIA.ui.cancel": "Cancel",
@@ -111,6 +115,18 @@
   "ARIA.details.languages": "Languages",
   "ARIA.details.biography": "Biography",
   "ARIA.details.description": "Description",
+  "ARIA.specialAbilityRoll.title": "Special abilities — roll references",
+  "ARIA.specialAbilityRoll.rawLabel": "Raw roll",
+  "ARIA.specialAbilityRoll.guidance": "These buttons make private raw rolls. Percentages and skill scores are references only; assess conditions, success, and effects manually.",
+  "ARIA.specialAbilityRoll.threshold": "Reference",
+  "ARIA.specialAbilityRoll.flavor.raw": "Private raw roll: {label} ({formula}). Interpret manually.",
+  "ARIA.specialAbilityRoll.flavor.reference": "Private reference roll: {label} ({formula}; reference {threshold}%). Interpret manually.",
+  "ARIA.specialAbilityRoll.notice.noSection": "No “Compétences spéciales” section was found in the current description.",
+  "ARIA.specialAbilityRoll.notice.manual": "Some expressions are not supported as safe literal rolls and remain editable prose.",
+  "ARIA.specialAbilityRoll.notice.target": "A skill check needs an unambiguous same-character competence; target/opposed checks remain prose.",
+  "ARIA.specialAbilityRoll.notice.permission": "You cannot roll from this character sheet.",
+  "ARIA.specialAbilityRoll.notice.stale": "This roll control is out of date. Refresh the sheet and try again.",
+  "ARIA.specialAbilityRoll.notice.failure": "The private roll failed: {reason}",
 
   "ARIA.stats.label": "Characteristics",
   "ARIA.stats.abbrev": "STATS",
